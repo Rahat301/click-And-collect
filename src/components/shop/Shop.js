@@ -16,11 +16,16 @@ const Shop = () => {
 
     const [products,setProducts] = useState([])
     const[cart,setCard] = useState([]);
+    const [searchProduct, setSearchProduct] = useState([])
 
     useEffect(()=>{
         fetch('./products.json')
         .then(res=> res.json())
-        .then(data => setProducts(data));
+        .then(data => {
+            setProducts(data);
+            setSearchProduct(data);
+        });
+
     },[])
 
     //add to cart event handler
@@ -30,6 +35,19 @@ const Shop = () => {
         
     }
 
+    //search product
+    const handleSearch = event =>
+    {
+       const searchProduct =  event.target.value;
+       const filteredProduct = products.filter((product)=>( 
+        product.name.toLowerCase().includes(searchProduct.toLowerCase())
+
+        )
+       )
+        setSearchProduct(filteredProduct);
+    }
+    
+
     // cart icon design
     return (
        
@@ -38,7 +56,7 @@ const Shop = () => {
             <h1>Search Your Products</h1>
 
             <div style={{display:"flex" ,alignItems:"center", justifyContent:"center"}}>
-                <input type="text" placeholder='Search Products' />
+                <input onChange={handleSearch} type="text" placeholder='Search Products' />
                 {cartIcon}
                 <span>{cart.length}</span>
             </div>
@@ -48,7 +66,7 @@ const Shop = () => {
 
             <div className='shop-childs'>
                 <div className='products'>
-                    {products.map((product)=>(
+                    {searchProduct.map((product)=>(
                     <Products handleCart={handleCart} key={product._id} product={product}></Products>
                      ))}
                 </div>
